@@ -100,7 +100,7 @@ SQL > exit
 
 Describe table command:
 ```sh
-./mig describe --driver=mysql -u=root -p=123 --dbname=new_db --tbl=pet
+$ ./mig describe --driver=mysql -u=root -p=123 --dbname=new_db --tbl=pet
 
 Connection query:
 root:123@tcp(127.0.0.1:3306)/new_db?charset=utf8
@@ -133,7 +133,7 @@ DONE (636.755µs)
 Drop database command:
 
 ```sh
-./mig drop --driver=mysql -u=root -p=123 --dbname=new_db
+$ ./mig drop --driver=mysql -u=root -p=123 --dbname=new_db
 
 Connection query:
 root:123@tcp(127.0.0.1:3306)/?charset=utf8
