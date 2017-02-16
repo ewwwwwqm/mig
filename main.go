@@ -58,7 +58,7 @@ func (appDrivers *availableDrivers) Output(list bool) (availableDriversOutput st
 }
 
 // Checks driver from available drivers list.
-func checkDriver(driver string) error {
+func CheckDriver(driver string) error {
 	for _, v := range appDrivers.Driver {
 		if driver == v {
 			return nil
@@ -143,7 +143,7 @@ var createCom = &cli.Command{
 			// pg: postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full
 
 			// check the driver
-			err := checkDriver(argv.Driver)
+			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
@@ -227,7 +227,7 @@ var dropCom = &cli.Command{
 			ctx.String("\n")
 
 			// check the driver
-			err := checkDriver(argv.Driver)
+			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
@@ -299,7 +299,7 @@ var describeCom = &cli.Command{
 			ctx.String("\n")
 
 			// check the driver
-			err := checkDriver(argv.Driver)
+			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
@@ -387,7 +387,7 @@ var sqlCom = &cli.Command{
 			ctx.String("\n")
 
 			// check the driver
-			err := checkDriver(argv.Driver)
+			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
