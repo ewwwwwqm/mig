@@ -125,7 +125,7 @@ type connT struct {
 	User string       `cli:"u,user" usage:"username" prompt:"Database username"`
 	Password string   `pw:"p,password" usage:"password" prompt:"Database password"`
 	Charset string    `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
-	Dbpatр string     `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
+	Dbpath string     `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
 	Table string      `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
 }
 
