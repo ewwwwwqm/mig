@@ -17,17 +17,17 @@ import (
 
 // Data section for constants and common phrases.
 const (
-	APP_NAME string 			= "Database migration utility"
-	APP_VERSION string 			= "0.1.0"
+	APP_NAME string          = "Database migration utility"
+	APP_VERSION string       = "0.1.0"
 
-	APP_NO_INPUT string 		= "No input parameters were specified."
-	APP_HELP_USAGE string 		= "Use -h to display help information."
-	APP_AVAIL_DRIVERS string 	= "Available drivers"
-	APP_HELP_URL string 		= "Visit github.com/ewwwwwqm/mig for more information."
+	APP_NO_INPUT string      = "No input parameters were specified."
+	APP_HELP_USAGE string    = "Use -h to display help information."
+	APP_AVAIL_DRIVERS string = "Available drivers"
+	APP_HELP_URL string      = "Visit github.com/ewwwwwqm/mig for more information."
 
-	APP_CONN_QUERY string 		= "Connection query:"
-	APP_SQL_EXEC string 		= "SQL:"
-	APP_RESULT string 			= "Result:"
+	APP_CONN_QUERY string    = "Connection query:"
+	APP_SQL_EXEC string      = "SQL:"
+	APP_RESULT string        = "Result:"
 )
 
 // Global varialble for interaction with database.
@@ -75,11 +75,11 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 			includedDbName = ""
 		}
 		conn = fmt.Sprintf("%v:%v@%v(%v:%v)/%v?charset=%v",
-			args.User, 
-			args.Password, 
-			args.Protocol, 
-			args.Host, 
-			args.Port, 
+			args.User,
+			args.Password,
+			args.Protocol,
+			args.Host,
+			args.Port,
 			includedDbName,
 			args.Charset)
 		return nil, conn
@@ -94,8 +94,8 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 // Type for top-level options.
 type rootT struct {
 	cli.Helper
-	Version  bool `cli:"v,version" usage:"display current version"`
-	AvailableDrivers  bool `cli:"drivers" usage:"display available drivers"`
+	Version bool          `cli:"v,version" usage:"display current version"`
+	AvailableDrivers bool `cli:"drivers" usage:"display available drivers"`
 }
 
 // Root level command.
@@ -117,16 +117,16 @@ var root = &cli.Command{
 // Type for create command.
 type connT struct {
 	cli.Helper
-	Driver      string        `cli:"*drv,driver" usage:"database driver" prompt:"Database driver"`
-	Host        string        `cli:"host" usage:"hostname or ip" prompt:"Hostname" dft:"127.0.0.1"`
-	Protocol 	string 		  `cli:"protocol" usage:"communication protocol" prompt:"Protocol" dft:"tcp"`
-	Port        int16         `cli:"port" usage:"database port" prompt:"Port" dft:"3306"`
-	Dbname      string        `cli:"*db,dbname" usage:"name of the database" prompt:"Database name"`
-	User        string        `cli:"u,user" usage:"username" prompt:"Database username"`
-	Password    string        `pw:"p,password" usage:"password" prompt:"Database password"`
-	Charset     string        `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
-	Dbpath		string 		  `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
-	Table 		string 		  `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
+	Driver string     `cli:"*drv,driver" usage:"database driver" prompt:"Database driver"`
+	Host string       `cli:"host" usage:"hostname or ip" prompt:"Hostname" dft:"127.0.0.1"`
+	Protocol string   `cli:"protocol" usage:"communication protocol" prompt:"Protocol" dft:"tcp"`
+	Port int16        `cli:"port" usage:"database port" prompt:"Port" dft:"3306"`
+	Dbname string     `cli:"*db,dbname" usage:"name of the database" prompt:"Database name"`
+	User string       `cli:"u,user" usage:"username" prompt:"Database username"`
+	Password string   `pw:"p,password" usage:"password" prompt:"Database password"`
+	Charset string    `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
+	Dbpatр string     `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
+	Table string      `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
 }
 
 // Create command builds connection and tries to create database.
@@ -149,7 +149,7 @@ var createCom = &cli.Command{
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
-			
+
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
@@ -163,7 +163,7 @@ var createCom = &cli.Command{
 
 			if argv.Driver == "mysql" {
 				ctx.String("\n")
-				
+
 				// open connection
 				db, err := sql.Open(argv.Driver, conn)
 				if err != nil {
@@ -172,7 +172,7 @@ var createCom = &cli.Command{
 				}
 				defer db.Close()
 
-				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")		
+				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
 
 				// create database query
 				query := fmt.Sprintf("CREATE DATABASE %s CHARACTER SET %s", argv.Dbname, argv.Charset)
@@ -206,7 +206,7 @@ var createCom = &cli.Command{
 
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
-				ctx.Color().Green("DONE") + " " + 
+				ctx.Color().Green("DONE") + " " +
 				ctx.Color().Dim("(" + elapsed + ")") + "\n")
 		}
 
@@ -233,7 +233,7 @@ var dropCom = &cli.Command{
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
-			
+
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
@@ -251,7 +251,7 @@ var dropCom = &cli.Command{
 				return nil
 			}
 			defer db.Close()
-			
+
 			start := time.Now()
 
 			// drop database query
@@ -278,7 +278,7 @@ var dropCom = &cli.Command{
 
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
-				ctx.Color().Green("DONE") + " " + 
+				ctx.Color().Green("DONE") + " " +
 				ctx.Color().Dim("(" + elapsed + ")") + "\n")
 		}
 
@@ -305,7 +305,7 @@ var describeCom = &cli.Command{
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
-			
+
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
@@ -330,7 +330,7 @@ var describeCom = &cli.Command{
 			// describe table query
 			query := fmt.Sprintf("DESCRIBE %v", argv.Table)
 			ctx.String(ctx.Color().Cyan(query + ";") + "\n")
-			ret, err := db.Query(query)		
+			ret, err := db.Query(query)
 			if err != nil {
 				ctx.String("\n")
 				ctx.String(ctx.Color().Red(err.Error()) + "\n")
@@ -366,7 +366,7 @@ var describeCom = &cli.Command{
 
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
-				ctx.Color().Green("DONE") + " " + 
+				ctx.Color().Green("DONE") + " " +
 				ctx.Color().Dim("(" + elapsed + ")") + "\n")
 		}
 
@@ -393,7 +393,7 @@ var sqlCom = &cli.Command{
 				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
-			
+
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
@@ -410,7 +410,7 @@ var sqlCom = &cli.Command{
 				ctx.String(ctx.Color().Red(err.Error()))
 				return nil
 			}
-			defer db.Close()		
+			defer db.Close()
 
 			reader := bufio.NewReader(os.Stdin)
 			var text string
@@ -419,15 +419,15 @@ var sqlCom = &cli.Command{
 				text, _ := reader.ReadString('\n')
 				text = strings.TrimSpace(text)
 
-				if text == "q" || text == "exit" || text == "\\q" || text == "/q" || text == ".exit" { 
-					break 
+				if text == "q" || text == "exit" || text == "\\q" || text == "/q" || text == ".exit" {
+					break
 				}
 
 				start := time.Now()
 
 				// get text as query
 				query := fmt.Sprintf("%v", text)
-				ret, err := db.Query(query)		
+				ret, err := db.Query(query)
 				if err != nil {
 					ctx.String("\n")
 					ctx.String(ctx.Color().Red(err.Error()) + "\n")
@@ -466,7 +466,7 @@ var sqlCom = &cli.Command{
 
 				elapsed := fmt.Sprintf("%v", time.Since(start))
 				ctx.String("\n" +
-					ctx.Color().Green("DONE") + " " + 
+					ctx.Color().Green("DONE") + " " +
 					ctx.Color().Dim("(" + elapsed + ")") + "\n")
 			}
 		}
@@ -484,7 +484,7 @@ func ResultHolder(rows *sql.Rows) []interface{} {
 	cols, err := rows.Columns()
 	if err != nil {
 		return make([]interface{}, 0, 0)
-	}	
+	}
 	l := len(cols)
 	result := make([]interface{}, l, l)
 	for i, _ := range cols {
@@ -536,7 +536,7 @@ func main() {
 				APP_NAME, "\n" + "v" +
 				APP_VERSION, "\n\n" +
 				APP_HELP_USAGE, "\n\n" +
-				APP_AVAIL_DRIVERS + ": " + 
+				APP_AVAIL_DRIVERS + ": " +
 				appDrivers.Output(false) + "\n" +
 				APP_HELP_URL)
 			os.Exit(1)
