@@ -144,6 +144,13 @@ DROP DATABASE new_db;
 DONE (12.676195ms)
 ```
 
+## TODO
+* create/update/delete/set connection configuration files
+* dump command
+* pack/unpack dump files
+* merge sql command
+* webserver api
+
 ## Thanks
 * https://github.com/mkideal/cli package for building CLI apps.
 * https://github.com/labstack/gommon/tree/master/color for colors.
