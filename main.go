@@ -68,7 +68,7 @@ func CheckDriver(driver string) error {
 }
 
 // Builds connection string.
-func buildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
+func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 	if args.Driver == "mysql" {
 		includedDbName := args.Dbname
 		if !includeDatabaseName {
@@ -153,7 +153,7 @@ var createCom = &cli.Command{
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
-			err, conn := buildConn(argv, false)
+			err, conn := BuildConn(argv, false)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -237,7 +237,7 @@ var dropCom = &cli.Command{
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
-			err, conn := buildConn(argv, false)
+			err, conn := BuildConn(argv, false)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -309,7 +309,7 @@ var describeCom = &cli.Command{
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
-			err, conn := buildConn(argv, true)
+			err, conn := BuildConn(argv, true)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -397,7 +397,7 @@ var sqlCom = &cli.Command{
 			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
 
 			// build conn string for specified driver
-			err, conn := buildConn(argv, true)
+			err, conn := BuildConn(argv, true)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
