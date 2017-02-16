@@ -5,5 +5,9 @@ sudo: false
 before_script:
   - go vet ./...
 install:
+  - go get github.com/ewwwwwqm/cli
+  - go get github.com/go-sql-driver/mysql
+  - go get github.com/lib/pq
+  - go get github.com/mattn/go-sqlite3
   - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
   - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
