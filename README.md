@@ -4,7 +4,30 @@
 [![Build Status][ci-img]][ci]
 [![Go Report Card][goreportcard-img]][goreportcard]
 
-## Use cases
+Database migration utility provides a single interface for database management.
+
+Current version: 0.1.0
+
+Included drivers:
+* mysql
+* sqlite3
+* postgres *(currently not available)*
+
+Available commands:
+* create
+* drop
+* describe
+* sql
+
+## TODO
+* Postgres
+* Create/update/set/delete configuration files for connections
+* Dump database/tables command
+* Pack/unpack dumped database files
+* Merge databases/tables command
+* Webserver api for REST and security
+
+## Examples
 
 Display help information:
 
@@ -143,13 +166,6 @@ DROP DATABASE new_db;
 
 DONE (12.676195ms)
 ```
-
-## TODO
-* create/update/delete/set connection configuration files
-* dump command
-* pack/unpack dump files
-* merge sql command
-* webserver api
 
 ## Thanks
 * https://github.com/mkideal/cli package for building CLI apps.
