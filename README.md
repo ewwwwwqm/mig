@@ -11,7 +11,7 @@ Current version: 0.1.0
 Included drivers:
 * mysql
 * sqlite3
-* postgres *(currently not available)*
+* postgres
 
 Available commands:
 * create
@@ -20,12 +20,12 @@ Available commands:
 * sql
 
 ## TODO
-* Postgres
-* Create/update/set/delete configuration files for connections
-* Dump database/tables command
-* Pack/unpack dumped database files
-* Merge databases/tables command
-* Webserver api for REST and security
+- [x] Postgres
+- [ ] Create/update/set/delete configuration files for connections
+- [ ] Dump database/tables command
+- [ ] Pack/unpack dumped database files
+- [ ] Merge databases/tables command
+- [ ] Webserver api for REST and security
 
 ## Examples
 

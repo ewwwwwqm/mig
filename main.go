@@ -84,6 +84,14 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 			args.Charset)
 		return nil, conn
 	}
+	if args.Driver == "postgres" {
+		conn = fmt.Sprintf("host=%s user=%s password=%s sslmode=%v",
+				args.Host,
+				args.User,
+				args.Password,
+				args.Sslmode)
+		return nil, conn
+	}
 	if args.Driver == "sqlite3" {
 		conn = fmt.Sprintf("%v%v.db", args.Dbpath, args.Dbname)
 		return nil, conn
@@ -127,6 +135,7 @@ type connT struct {
 	Charset string    `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
 	Dbpath string     `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
 	Table string      `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
+	Sslmode string    `cli:"sslmode" usage:"SSL mode" prompt:"SSL mode" dft:"disable"`
 }
 
 // Create command builds connection and tries to create database.
@@ -186,6 +195,29 @@ var createCom = &cli.Command{
 
 				// use database query
 				query = fmt.Sprintf("USE %s", argv.Dbname)
+				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				_, err = db.Exec(query)
+				if err != nil {
+					ctx.String("\n")
+					ctx.String(ctx.Color().Red(err.Error()) + "\n")
+					return nil
+				}
+			}
+			if argv.Driver == "postgres" {
+				ctx.String("\n")
+
+				// open connection
+				db, err := sql.Open(argv.Driver, conn)
+				if err != nil {
+					ctx.String(ctx.Color().Red(err.Error()))
+					return nil
+				}
+				defer db.Close()
+
+				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+
+				// create database query
+				query := fmt.Sprintf("CREATE DATABASE %s OWNER %s ENCODING '%s'", argv.Dbname, argv.User, strings.ToUpper(argv.Charset))
 				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
@@ -266,8 +298,19 @@ var dropCom = &cli.Command{
 					return nil
 				}
 			}
-			// remove the file
+			if argv.Driver == "postgres" {
+				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+				query := fmt.Sprintf("DROP DATABASE %s", argv.Dbname)
+				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				_, err = db.Exec(query)
+				if err != nil {
+					ctx.String("\n")
+					ctx.String(ctx.Color().Red(err.Error()) + "\n")
+					return nil
+				}
+			}
 			if argv.Driver == "sqlite3" {
+				// remove the file
 				err = os.Remove(conn)
 				if err != nil {
 					ctx.String("\n")
@@ -327,14 +370,27 @@ var describeCom = &cli.Command{
 			ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
 			start := time.Now()
 
-			// describe table query
-			query := fmt.Sprintf("DESCRIBE %v", argv.Table)
-			ctx.String(ctx.Color().Cyan(query + ";") + "\n")
-			ret, err := db.Query(query)
-			if err != nil {
-				ctx.String("\n")
-				ctx.String(ctx.Color().Red(err.Error()) + "\n")
-				return nil
+			var ret *sql.Rows
+			if argv.Driver == "mysql" || argv.Driver == "sqlite3" {
+				// describe table query
+				query := fmt.Sprintf("DESCRIBE %v", argv.Table)
+				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ret, err = db.Query(query)
+				if err != nil {
+					ctx.String("\n")
+					ctx.String(ctx.Color().Red(err.Error()) + "\n")
+					return nil
+				}
+			}
+			if argv.Driver == "postgres" {
+				query := fmt.Sprintf("SELECT attname FROM pg_attribute,pg_class WHERE attrelid=pg_class.oid AND relname='%v' AND attstattarget <> 0;", argv.Table)
+				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ret, err = db.Query(query)
+				if err != nil {
+					ctx.String("\n")
+					ctx.String(ctx.Color().Red(err.Error()) + "\n")
+					return nil
+				}
 			}
 
 			ctx.String("\n")
@@ -353,7 +409,7 @@ var describeCom = &cli.Command{
 				for _,av := range keys {
 					for akk,avv := range v {
 						if akk == av {
-							ctx.String("\t" + ctx.Color().Grey(akk) + ": " + avv + "\n")
+							ctx.String(ctx.Color().Grey(akk) + ": " + avv + "\n")
 						}
 					}
 				}
@@ -524,8 +580,8 @@ func RawResultMap(rows *sql.Rows) []rawResult {
 func main() {
 	if err := cli.Root(root,
 		cli.Tree(createCom),
-		cli.Tree(dropCom),
 		cli.Tree(describeCom),
+		cli.Tree(dropCom),
 		cli.Tree(sqlCom),
 	).Run(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err)
