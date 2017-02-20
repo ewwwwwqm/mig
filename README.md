@@ -181,5 +181,5 @@ DONE (12.676195ms)
 [cov-img]: https://coveralls.io/repos/github/ewwwwwqm/migbadge.svg?branch=master
 [ci]: https://travis-ci.org/ewwwwwqm/mig
 [cov]: https://coveralls.io/github/ewwwwwqm/mig?branch=master
-[goreportcard-img]: https://goreportcard.com/badge/github.com/ewwwwwqm/mig?etag=1
+[goreportcard-img]: https://goreportcard.com/badge/github.com/ewwwwwqm/mig
 [goreportcard]: https://goreportcard.com/report/github.com/ewwwwwqm/mig
