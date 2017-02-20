@@ -33,7 +33,7 @@ func TestBuildConn(t *testing.T) {
 	args.Charset = "utf8"
 
 	// Try to build connection string
-	err, conn := BuildConn(&args, true)
+	conn, err := BuildConn(&args, true)
 	if err != nil {
 		t.Error("failed to build connection")
 	}
