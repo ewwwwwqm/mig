@@ -22,7 +22,7 @@ func TestCheckDriver(t *testing.T) {
 
 func TestBuildConn(t *testing.T) {
 	var args connT // input parameters
-	
+
 	// Set arguments
 	args.Driver = "mysql"
 	args.Dbname = "db_new"

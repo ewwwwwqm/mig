@@ -17,17 +17,17 @@ import (
 
 // Data section for constants and common phrases.
 const (
-	APP_NAME string          = "Database migration utility"
-	APP_VERSION string       = "0.1.0"
+	APP_NAME    string = "Database migration utility"
+	APP_VERSION string = "0.1.0"
 
-	APP_NO_INPUT string      = "No input parameters were specified."
-	APP_HELP_USAGE string    = "Use -h to display help information."
+	APP_NO_INPUT      string = "No input parameters were specified."
+	APP_HELP_USAGE    string = "Use -h to display help information."
 	APP_AVAIL_DRIVERS string = "Available drivers"
-	APP_HELP_URL string      = "Visit github.com/ewwwwwqm/mig for more information."
+	APP_HELP_URL      string = "Visit github.com/ewwwwwqm/mig for more information."
 
-	APP_CONN_QUERY string    = "Connection query:"
-	APP_SQL_EXEC string      = "SQL:"
-	APP_RESULT string        = "Result:"
+	APP_CONN_QUERY string = "Connection query:"
+	APP_SQL_EXEC   string = "SQL:"
+	APP_RESULT     string = "Result:"
 )
 
 // Global varialble for interaction with database.
@@ -86,10 +86,10 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 	}
 	if args.Driver == "postgres" {
 		conn = fmt.Sprintf("host=%s user=%s password=%s sslmode=%v",
-				args.Host,
-				args.User,
-				args.Password,
-				args.Sslmode)
+			args.Host,
+			args.User,
+			args.Password,
+			args.Sslmode)
 		return nil, conn
 	}
 	if args.Driver == "sqlite3" {
@@ -102,7 +102,7 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 // Type for top-level options.
 type rootT struct {
 	cli.Helper
-	Version bool          `cli:"v,version" usage:"display current version"`
+	Version          bool `cli:"v,version" usage:"display current version"`
 	AvailableDrivers bool `cli:"drivers" usage:"display available drivers"`
 }
 
@@ -125,17 +125,17 @@ var root = &cli.Command{
 // Type for create command.
 type connT struct {
 	cli.Helper
-	Driver string     `cli:"*drv,driver" usage:"database driver" prompt:"Database driver"`
-	Host string       `cli:"host" usage:"hostname or ip" prompt:"Hostname" dft:"127.0.0.1"`
-	Protocol string   `cli:"protocol" usage:"communication protocol" prompt:"Protocol" dft:"tcp"`
-	Port int16        `cli:"port" usage:"database port" prompt:"Port" dft:"3306"`
-	Dbname string     `cli:"*db,dbname" usage:"name of the database" prompt:"Database name"`
-	User string       `cli:"u,user" usage:"username" prompt:"Database username"`
-	Password string   `pw:"p,password" usage:"password" prompt:"Database password"`
-	Charset string    `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
-	Dbpath string     `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
-	Table string      `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
-	Sslmode string    `cli:"sslmode" usage:"SSL mode" prompt:"SSL mode" dft:"disable"`
+	Driver   string `cli:"*drv,driver" usage:"database driver" prompt:"Database driver"`
+	Host     string `cli:"host" usage:"hostname or ip" prompt:"Hostname" dft:"127.0.0.1"`
+	Protocol string `cli:"protocol" usage:"communication protocol" prompt:"Protocol" dft:"tcp"`
+	Port     int16  `cli:"port" usage:"database port" prompt:"Port" dft:"3306"`
+	Dbname   string `cli:"*db,dbname" usage:"name of the database" prompt:"Database name"`
+	User     string `cli:"u,user" usage:"username" prompt:"Database username"`
+	Password string `pw:"p,password" usage:"password" prompt:"Database password"`
+	Charset  string `cli:"charset" usage:"character set" prompt:"Database charset" dft:"utf8"`
+	Dbpath   string `cli:"dbpath" usage:"database path" prompt:"Database path" dft:"./"`
+	Table    string `cli:"tbl,table" usage:"table name" prompt:"Table name" dft:"scheme_info"`
+	Sslmode  string `cli:"sslmode" usage:"SSL mode" prompt:"SSL mode" dft:"disable"`
 }
 
 // Create command builds connection and tries to create database.
@@ -185,7 +185,7 @@ var createCom = &cli.Command{
 
 				// create database query
 				query := fmt.Sprintf("CREATE DATABASE %s CHARACTER SET %s", argv.Dbname, argv.Charset)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
 					ctx.String("\n")
@@ -195,7 +195,7 @@ var createCom = &cli.Command{
 
 				// use database query
 				query = fmt.Sprintf("USE %s", argv.Dbname)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
 					ctx.String("\n")
@@ -218,7 +218,7 @@ var createCom = &cli.Command{
 
 				// create database query
 				query := fmt.Sprintf("CREATE DATABASE %s OWNER %s ENCODING '%s'", argv.Dbname, argv.User, strings.ToUpper(argv.Charset))
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
 					ctx.String("\n")
@@ -239,7 +239,7 @@ var createCom = &cli.Command{
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
 				ctx.Color().Green("DONE") + " " +
-				ctx.Color().Dim("(" + elapsed + ")") + "\n")
+				ctx.Color().Dim("("+elapsed+")") + "\n")
 		}
 
 		return nil
@@ -290,7 +290,7 @@ var dropCom = &cli.Command{
 			if argv.Driver == "mysql" {
 				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
 				query := fmt.Sprintf("DROP DATABASE %s", argv.Dbname)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
 					ctx.String("\n")
@@ -301,7 +301,7 @@ var dropCom = &cli.Command{
 			if argv.Driver == "postgres" {
 				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
 				query := fmt.Sprintf("DROP DATABASE %s", argv.Dbname)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
 					ctx.String("\n")
@@ -322,7 +322,7 @@ var dropCom = &cli.Command{
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
 				ctx.Color().Green("DONE") + " " +
-				ctx.Color().Dim("(" + elapsed + ")") + "\n")
+				ctx.Color().Dim("("+elapsed+")") + "\n")
 		}
 
 		return nil
@@ -374,7 +374,7 @@ var describeCom = &cli.Command{
 			if argv.Driver == "mysql" || argv.Driver == "sqlite3" {
 				// describe table query
 				query := fmt.Sprintf("DESCRIBE %v", argv.Table)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				ret, err = db.Query(query)
 				if err != nil {
 					ctx.String("\n")
@@ -384,7 +384,7 @@ var describeCom = &cli.Command{
 			}
 			if argv.Driver == "postgres" {
 				query := fmt.Sprintf("SELECT attname FROM pg_attribute,pg_class WHERE attrelid=pg_class.oid AND relname='%v' AND attstattarget <> 0;", argv.Table)
-				ctx.String(ctx.Color().Cyan(query + ";") + "\n")
+				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				ret, err = db.Query(query)
 				if err != nil {
 					ctx.String("\n")
@@ -398,16 +398,16 @@ var describeCom = &cli.Command{
 
 			rrm := RawResultMap(ret)
 			rrmLen := len(rrm)
-			for k,v := range rrm {
+			for k, v := range rrm {
 				kk := fmt.Sprintf("%v/%v", k+1, rrmLen)
-				ctx.String(ctx.Color().Bold("# " + kk) + "\n")
+				ctx.String(ctx.Color().Bold("# "+kk) + "\n")
 				keys := []string{}
-				for ak,_ := range v {
+				for ak := range v {
 					keys = append(keys, ak)
 				}
 				sort.Strings(keys)
-				for _,av := range keys {
-					for akk,avv := range v {
+				for _, av := range keys {
+					for akk, avv := range v {
 						if akk == av {
 							ctx.String(ctx.Color().Grey(akk) + ": " + avv + "\n")
 						}
@@ -423,7 +423,7 @@ var describeCom = &cli.Command{
 			elapsed := fmt.Sprintf("%v", time.Since(start))
 			ctx.String("\n" +
 				ctx.Color().Green("DONE") + " " +
-				ctx.Color().Dim("(" + elapsed + ")") + "\n")
+				ctx.Color().Dim("("+elapsed+")") + "\n")
 		}
 
 		return nil
@@ -497,16 +497,16 @@ var sqlCom = &cli.Command{
 					ctx.String("\n")
 				}
 
-				for k,v := range rrm {
+				for k, v := range rrm {
 					kk := fmt.Sprintf("%v/%v", k+1, rrmLen)
-					ctx.String(ctx.Color().Bold("# " + kk) + "\n")
+					ctx.String(ctx.Color().Bold("# "+kk) + "\n")
 					keys := []string{}
-					for ak,_ := range v {
+					for ak := range v {
 						keys = append(keys, ak)
 					}
 					sort.Strings(keys)
-					for _,av := range keys {
-						for akk,avv := range v {
+					for _, av := range keys {
+						for akk, avv := range v {
 							if akk == av {
 								ctx.String("\t" + ctx.Color().Grey(akk) + ": " + avv + "\n")
 							}
@@ -523,7 +523,7 @@ var sqlCom = &cli.Command{
 				elapsed := fmt.Sprintf("%v", time.Since(start))
 				ctx.String("\n" +
 					ctx.Color().Green("DONE") + " " +
-					ctx.Color().Dim("(" + elapsed + ")") + "\n")
+					ctx.Color().Dim("("+elapsed+")") + "\n")
 			}
 		}
 
@@ -543,7 +543,7 @@ func ResultHolder(rows *sql.Rows) []interface{} {
 	}
 	l := len(cols)
 	result := make([]interface{}, l, l)
-	for i, _ := range cols {
+	for i := range cols {
 		result[i] = new(sql.RawBytes)
 	}
 	return result
@@ -589,12 +589,12 @@ func main() {
 	} else {
 		if len(os.Args) == 1 {
 			fmt.Fprintln(os.Stderr,
-				APP_NAME, "\n" + "v" +
-				APP_VERSION, "\n\n" +
-				APP_HELP_USAGE, "\n\n" +
-				APP_AVAIL_DRIVERS + ": " +
-				appDrivers.Output(false) + "\n" +
-				APP_HELP_URL)
+				APP_NAME, "\n"+"v"+
+					APP_VERSION, "\n\n"+
+					APP_HELP_USAGE, "\n\n"+
+					APP_AVAIL_DRIVERS+": "+
+					appDrivers.Output(false)+"\n"+
+					APP_HELP_URL)
 			os.Exit(1)
 		}
 	}
