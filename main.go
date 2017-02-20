@@ -217,7 +217,10 @@ var createCom = &cli.Command{
 				ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 
 				// create database query
-				query := fmt.Sprintf("CREATE DATABASE %s OWNER %s ENCODING '%s'", argv.Dbname, argv.User, strings.ToUpper(argv.Charset))
+				query := fmt.Sprintf("CREATE DATABASE %s OWNER %s ENCODING '%s'", 
+					argv.Dbname, 
+					argv.User, 
+					strings.ToUpper(argv.Charset))
 				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
 				if err != nil {
@@ -399,25 +402,29 @@ var describeCom = &cli.Command{
 			rrm := RawResultMap(ret)
 			rrmLen := len(rrm)
 			for k, v := range rrm {
-				kk := fmt.Sprintf("%v/%v", k+1, rrmLen)
-				ctx.String(ctx.Color().Bold("# "+kk) + "\n")
-				keys := []string{}
-				for ak := range v {
-					keys = append(keys, ak)
-				}
-				sort.Strings(keys)
-				for _, av := range keys {
-					for akk, avv := range v {
-						if akk == av {
-							ctx.String(ctx.Color().Grey(akk) + ": " + avv + "\n")
+					kk := fmt.Sprintf("%v/%v", k+1, rrmLen)
+					ctx.String(ctx.Color().White("{ ") + ctx.Color().Grey(kk) + "\n")
+					keys := []string{}
+					for ak := range v {
+						keys = append(keys, ak)
+					}
+					sort.Strings(keys)
+					for _, av := range keys {
+						for akk, avv := range v {
+							if akk == av {
+								ctx.String("  " + ctx.Color().Grey(akk) + ": " + avv + "\n")
+							}
 						}
 					}
-				}
-				ctx.String("\n")
-				if rrmLen == k+1 {
-					rslt := fmt.Sprintf("%v", rrmLen)
-					ctx.String("Fetched " + ctx.Color().Bold(rslt) + " result(s).\n")
-				}
+
+					ctx.String("}")
+					if rrmLen == k+1 {
+						ctx.String("\n\n")
+						rslt := fmt.Sprintf("%v", rrmLen)
+						ctx.String("Fetched " + ctx.Color().Bold(rslt) + " result(s).\n")
+					} else {
+						ctx.String(",\n")
+					}
 			}
 
 			elapsed := fmt.Sprintf("%v", time.Since(start))
@@ -434,7 +441,7 @@ var describeCom = &cli.Command{
 // Returns error if database exists.
 var sqlCom = &cli.Command{
 	Name: "sql",
-	Desc: "Promts for SQL queries",
+	Desc: "Prompts SQL queries",
 	Argv: func() interface{} { return new(connT) },
 	Fn: func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*connT)
@@ -471,7 +478,7 @@ var sqlCom = &cli.Command{
 			reader := bufio.NewReader(os.Stdin)
 			var text string
 			for text != "q" {
-				ctx.String(ctx.Color().Bold("SQL") + " > ")
+				ctx.String(ctx.Color().Bold(argv.Driver) + "> ")
 				text, _ := reader.ReadString('\n')
 				text = strings.TrimSpace(text)
 
@@ -499,7 +506,7 @@ var sqlCom = &cli.Command{
 
 				for k, v := range rrm {
 					kk := fmt.Sprintf("%v/%v", k+1, rrmLen)
-					ctx.String(ctx.Color().Bold("# "+kk) + "\n")
+					ctx.String(ctx.Color().White("{ ") + ctx.Color().Grey(kk) + "\n")
 					keys := []string{}
 					for ak := range v {
 						keys = append(keys, ak)
@@ -508,15 +515,18 @@ var sqlCom = &cli.Command{
 					for _, av := range keys {
 						for akk, avv := range v {
 							if akk == av {
-								ctx.String("\t" + ctx.Color().Grey(akk) + ": " + avv + "\n")
+								ctx.String("  " + ctx.Color().Grey(akk) + ": " + avv + "\n")
 							}
 						}
 					}
 
-					ctx.String("\n")
+					ctx.String("}")
 					if rrmLen == k+1 {
+						ctx.String("\n\n")
 						rslt := fmt.Sprintf("%v", rrmLen)
 						ctx.String("Fetched " + ctx.Color().Bold(rslt) + " result(s).\n")
+					} else {
+						ctx.String(",\n")
 					}
 				}
 
