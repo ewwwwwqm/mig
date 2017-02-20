@@ -29,7 +29,7 @@ Available commands:
 
 ## Usage help
 
-###### Display help information:
+##### Display help information:
 
 ```sh
 $ ./mig -h
@@ -52,7 +52,7 @@ Commands:
   sql        Prompts SQL queries
 ```
 
-###### Display create command help:
+##### Display create command help:
 
 ```sh
 $ ./mig create -h
@@ -74,7 +74,7 @@ Options:
       --sslmode[=disable]            SSL mode
 ```
 
-###### Create a database using prompt:
+##### Create a database using prompt:
 
 ```sh
 $ ./mig create
@@ -149,7 +149,7 @@ CREATE DATABASE new_db OWNER postgres ENCODING 'UTF8';
 DONE (335.11233ms)
 ```
 
-###### Manually create a table and insert data using internal SQL editor:
+##### Manually create a table and insert data using internal SQL editor:
 
 ```sh
 $ ./mig sql --driver=mysql -u=root -p=123 --dbname=new_db
@@ -182,7 +182,7 @@ DONE (9.593785ms)
 mysql> exit
 ```
 
-###### Describe table command:
+##### Describe table command:
 ```sql
 $ ./mig describe --driver=mysql -u=root -p=123 --dbname=new_db --tbl=pet
 
@@ -216,7 +216,7 @@ DONE (14.334859ms)
 
 ```
 
-###### Drop database command:
+##### Drop database command:
 
 ```sql
 $ ./mig drop --driver=mysql -u=root -p=123 --dbname=new_db
