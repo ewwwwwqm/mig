@@ -17,17 +17,17 @@ import (
 
 // Data section for constants and common phrases.
 const (
-	APP_NAME    string = "Database migration utility"
-	APP_VERSION string = "0.1.0"
+	AppName    string = "Database migration utility"
+	AppVersion string = "0.1.0"
 
-	APP_NO_INPUT      string = "No input parameters were specified."
-	APP_HELP_USAGE    string = "Use -h to display help information."
-	APP_AVAIL_DRIVERS string = "Available drivers"
-	APP_HELP_URL      string = "Visit github.com/ewwwwwqm/mig for more information."
+	AppNoInput          string = "No input parameters were specified."
+	AppHelpUsage        string = "Use -h to display help information."
+	AppAvailableDrivers string = "Available drivers"
+	AppHelpURL          string = "Visit github.com/ewwwwwqm/mig for more information."
 
-	APP_CONN_QUERY string = "Connection query:"
-	APP_SQL_EXEC   string = "SQL:"
-	APP_RESULT     string = "Result:"
+	AppConnQuery string = "Connection query:"
+	AppSQLExec   string = "SQL:"
+	AppResult    string = "Result:"
 )
 
 // Global varialble for interaction with database.
@@ -57,7 +57,7 @@ func (appDrivers *availableDrivers) Output(list bool) (availableDriversOutput st
 	return availableDriversOutput
 }
 
-// Checks driver from available drivers list.
+// CheckDriver checks driver from available drivers list.
 func CheckDriver(driver string) error {
 	for _, v := range appDrivers.Driver {
 		if driver == v {
@@ -67,8 +67,8 @@ func CheckDriver(driver string) error {
 	return errors.New("driver: " + driver + " is not available.\n\n")
 }
 
-// Builds connection string.
-func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
+// BuildConn builds connection string.
+func BuildConn(args *connT, includeDatabaseName bool) (conn string, err error) {
 	if args.Driver == "mysql" {
 		includedDbName := args.Dbname
 		if !includeDatabaseName {
@@ -82,7 +82,7 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 			args.Port,
 			includedDbName,
 			args.Charset)
-		return nil, conn
+		return conn, nil
 	}
 	if args.Driver == "postgres" {
 		conn = fmt.Sprintf("host=%s user=%s password=%s sslmode=%v",
@@ -90,13 +90,13 @@ func BuildConn(args *connT, includeDatabaseName bool) (err error, conn string) {
 			args.User,
 			args.Password,
 			args.Sslmode)
-		return nil, conn
+		return conn, nil
 	}
 	if args.Driver == "sqlite3" {
 		conn = fmt.Sprintf("%v%v.db", args.Dbpath, args.Dbname)
-		return nil, conn
+		return conn, nil
 	}
-	return errors.New("build connection was ignored"), ""
+	return "", errors.New("build connection was ignored")
 }
 
 // Type for top-level options.
@@ -108,12 +108,12 @@ type rootT struct {
 
 // Root level command.
 var root = &cli.Command{
-	Desc: APP_NAME + "\nv" + APP_VERSION + "\n\n" + APP_HELP_URL,
+	Desc: AppName + "\nv" + AppVersion + "\n\n" + AppHelpURL,
 	Argv: func() interface{} { return new(rootT) },
 	Fn: func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*rootT)
 		if argv.Version {
-			ctx.String(APP_VERSION + "\n")
+			ctx.String(AppVersion + "\n")
 		}
 		if argv.AvailableDrivers {
 			ctx.String(appDrivers.Output(true) + "\n")
@@ -155,14 +155,14 @@ var createCom = &cli.Command{
 			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
-				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
+				ctx.String(AppAvailableDrivers + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
 
-			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
+			ctx.String(ctx.Color().Bold(AppConnQuery) + "\n")
 
 			// build conn string for specified driver
-			err, conn := BuildConn(argv, false)
+			conn, err := BuildConn(argv, false)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -181,7 +181,7 @@ var createCom = &cli.Command{
 				}
 				defer db.Close()
 
-				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+				ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 
 				// create database query
 				query := fmt.Sprintf("CREATE DATABASE %s CHARACTER SET %s", argv.Dbname, argv.Charset)
@@ -214,7 +214,7 @@ var createCom = &cli.Command{
 				}
 				defer db.Close()
 
-				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+				ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 
 				// create database query
 				query := fmt.Sprintf("CREATE DATABASE %s OWNER %s ENCODING '%s'", argv.Dbname, argv.User, strings.ToUpper(argv.Charset))
@@ -262,14 +262,14 @@ var dropCom = &cli.Command{
 			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
-				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
+				ctx.String(AppAvailableDrivers + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
 
-			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
+			ctx.String(ctx.Color().Bold(AppConnQuery) + "\n")
 
 			// build conn string for specified driver
-			err, conn := BuildConn(argv, false)
+			conn, err := BuildConn(argv, false)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -288,7 +288,7 @@ var dropCom = &cli.Command{
 
 			// drop database query
 			if argv.Driver == "mysql" {
-				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+				ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 				query := fmt.Sprintf("DROP DATABASE %s", argv.Dbname)
 				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
@@ -299,7 +299,7 @@ var dropCom = &cli.Command{
 				}
 			}
 			if argv.Driver == "postgres" {
-				ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+				ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 				query := fmt.Sprintf("DROP DATABASE %s", argv.Dbname)
 				ctx.String(ctx.Color().Cyan(query+";") + "\n")
 				_, err = db.Exec(query)
@@ -345,14 +345,14 @@ var describeCom = &cli.Command{
 			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
-				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
+				ctx.String(AppAvailableDrivers + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
 
-			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
+			ctx.String(ctx.Color().Bold(AppConnQuery) + "\n")
 
 			// build conn string for specified driver
-			err, conn := BuildConn(argv, true)
+			conn, err := BuildConn(argv, true)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -367,7 +367,7 @@ var describeCom = &cli.Command{
 			}
 			defer db.Close()
 
-			ctx.String(ctx.Color().Bold(APP_SQL_EXEC) + "\n")
+			ctx.String(ctx.Color().Bold(AppSQLExec) + "\n")
 			start := time.Now()
 
 			var ret *sql.Rows
@@ -394,7 +394,7 @@ var describeCom = &cli.Command{
 			}
 
 			ctx.String("\n")
-			ctx.String(ctx.Color().Bold(APP_RESULT) + "\n")
+			ctx.String(ctx.Color().Bold(AppResult) + "\n")
 
 			rrm := RawResultMap(ret)
 			rrmLen := len(rrm)
@@ -446,14 +446,14 @@ var sqlCom = &cli.Command{
 			err := CheckDriver(argv.Driver)
 			if err != nil {
 				ctx.String(ctx.Color().Red(err.Error()))
-				ctx.String(APP_AVAIL_DRIVERS + ": " + appDrivers.Output(false) + "\n")
+				ctx.String(AppAvailableDrivers + ": " + appDrivers.Output(false) + "\n")
 				return nil
 			}
 
-			ctx.String(ctx.Color().Bold(APP_CONN_QUERY) + "\n")
+			ctx.String(ctx.Color().Bold(AppConnQuery) + "\n")
 
 			// build conn string for specified driver
-			err, conn := BuildConn(argv, true)
+			conn, err := BuildConn(argv, true)
 			if err != nil {
 				return fmt.Errorf(err.Error())
 			}
@@ -534,8 +534,8 @@ var sqlCom = &cli.Command{
 // Help variable to store help command.
 var help = cli.HelpCommand("Display help information")
 
-// Creates a result holder for a query result
-// as an array of raw bytes.
+// ResultHolder for a query result as an array
+// of raw bytes.
 func ResultHolder(rows *sql.Rows) []interface{} {
 	cols, err := rows.Columns()
 	if err != nil {
@@ -549,18 +549,18 @@ func ResultHolder(rows *sql.Rows) []interface{} {
 	return result
 }
 
-// Type for raw result.
-type rawResult map[string]string
+// RawResult type.
+type RawResult map[string]string
 
-// Converts a query results row for each row result
+// RawResultMap queries results row for each row
 // as a map of column to raw bytes.
-func RawResultMap(rows *sql.Rows) []rawResult {
+func RawResultMap(rows *sql.Rows) []RawResult {
 	cols, err := rows.Columns()
 	if err != nil {
-		return make([]rawResult, 0)
+		return make([]RawResult, 0)
 	}
 	result := ResultHolder(rows)
-	results := make([]rawResult, 0)
+	results := make([]RawResult, 0)
 	c := 0
 	for rows.Next() {
 		c++
@@ -589,12 +589,12 @@ func main() {
 	} else {
 		if len(os.Args) == 1 {
 			fmt.Fprintln(os.Stderr,
-				APP_NAME, "\n"+"v"+
-					APP_VERSION, "\n\n"+
-					APP_HELP_USAGE, "\n\n"+
-					APP_AVAIL_DRIVERS+": "+
+				AppName, "\n"+"v"+
+					AppVersion, "\n\n"+
+					AppHelpUsage, "\n\n"+
+					AppAvailableDrivers+": "+
 					appDrivers.Output(false)+"\n"+
-					APP_HELP_URL)
+					AppHelpURL)
 			os.Exit(1)
 		}
 	}
